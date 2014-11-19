@@ -30,7 +30,7 @@ for folder in data_folders:
         data_files.append(individual_center)
 
 
-# Get Coordsys
+# Get Coordsys (Finland Zone 2)
 coorsys_file = r"C:\HY-Data\HENTENKA\PKS_saavutettavuusVertailut\time_to_Jumbo_2009.shp"
 c = gpd.read_file(coorsys_file)
 coordsys = c.crs
