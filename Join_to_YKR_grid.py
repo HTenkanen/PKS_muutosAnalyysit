@@ -56,4 +56,3 @@ for pointfile in shapefiles:
     # Write outputfile
     joinWithYkr.to_file(output, driver="ESRI Shapefile")
 
-
