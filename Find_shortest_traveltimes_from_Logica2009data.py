@@ -39,17 +39,17 @@ coordsys = c.crs
 for ind_center in data_files:
 
     # Read data in as pandas DataFrame
-    data1 = pd.read_csv(ind_center[0], sep=',', header=None, names=['id', 'x', 'y', 'PT_total_time1'])
-    data2 = pd.read_csv(ind_center[1], sep=',', header=None, names=['id', 'x', 'y', 'PT_total_time2'])
-    data3 = pd.read_csv(ind_center[2], sep=',', header=None, names=['id', 'x', 'y', 'PT_total_time3'])
+    data1 = pd.read_csv(ind_center[0], sep=',', header=None, names=['id', 'x', 'y', 'PT_time1'])
+    data2 = pd.read_csv(ind_center[1], sep=',', header=None, names=['id', 'x', 'y', 'PT_time2'])
+    data3 = pd.read_csv(ind_center[2], sep=',', header=None, names=['id', 'x', 'y', 'PT_time3'])
 
     # Join datasets by 'id'
     join1 = pd.merge(data1, data2, how='outer', left_on = 'id', right_on='id')
     join2 = join1.merge(data3, how='outer', left_on = 'id', right_on='id')
-    data = join2[['id', 'x', 'y', 'PT_total_time1', 'PT_total_time2', 'PT_total_time3']].copy()
+    data = join2[['id', 'x', 'y', 'PT_time1', 'PT_time2', 'PT_time3']].copy()
 
     # Find shortest time
-    data['min_time'] = data.loc[:, ['PT_total_time1', 'PT_total_time2', 'PT_total_time3']].min(axis=1)
+    data['min_time'] = data.loc[:, ['PT_time1', 'PT_time2', 'PT_time3']].min(axis=1)
 
     # Create geometries from coordinates
     data['geometry'] = data.apply(coordToPoint, axis=1, lat='y', lon='x')

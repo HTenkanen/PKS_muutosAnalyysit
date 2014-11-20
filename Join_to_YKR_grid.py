@@ -1,44 +1,59 @@
 __author__ = 'hentenka'
 import geopandas as gpd
-import pandas as pd
-import sys
+import sys, os
 from rtree import index
 
-idx = index.Index()
+def buildRtree(polygon_df):
+    idx = index.Index()
+    for poly in polygon_df.iterrows():
+        idx.insert(poly[0], poly[1]['geometry'].bounds)
+    return idx
 
-def iterateAllPolys(polygon, point, source_column):
-    """Iterates over polygons"""
-    if polygon['geometry'].contains(point['geometry']):
-        print "Found"
-        return polygon[source_column]
+def querySpatialIndex(point, poly_df, poly_rtree, source_column):
+    """Find poly containing the point"""
+    point_coords = point['geometry'].coords[:][0]
+    for idx_poly in poly_rtree.intersection( point_coords ):
+        if poly_df['geometry'][idx_poly:idx_poly+1].values[0].contains(point['geometry']):
+            return poly_df[source_column][idx_poly:idx_poly+1].values[0]
+    return None
 
-def iteratePoints(point, poly_df, source_column, fast_search):
+def pointInPolygon(point_df, poly_df, poly_rtree, sourceColumn_in_poly, targetColumn_in_point, fast_search=True):
     """Iterates over points"""
-    if not fast_search:
-        return poly_df.apply(iterateAllPolys, axis=1, point=point, source_column=source_column)
-    else:
-        for poly in poly_df.iterrows():
-            if poly[1]['geometry'].contains(point['geometry']):
-               return poly[1][source_column]
-
-def pointInPolygon(point_df, poly_df, sourceColumn_in_poly, targetColumn_in_point, fast_search=True):
-    """Iterates over points"""
-    data = point_df[targetColumn_in_point] = point_df.apply(iteratePoints, axis=1, poly_df=poly_df, source_column=sourceColumn_in_poly, fast_search=fast_search)
+    data = point_df
+    data[targetColumn_in_point] = None
+    data[targetColumn_in_point] = point_df.apply(querySpatialIndex, axis=1, poly_df=poly_df, poly_rtree=poly_rtree, source_column=sourceColumn_in_poly)
     return data
+
+def parseShapefilePaths(topFolder):
+    paths = []
+    for root, dirs, files in os.walk(topFolder):
+        for filename in files:
+            if filename.endswith('.shp'):
+                paths.append(os.path.join(root,filename))
+    return paths
 
 # Filepaths
 YKR_grid = r"C:\HY-Data\HENTENKA\Python\MassaAjoNiputus\ShapeFileet\MetropAccess_YKR_grid\MetropAccess_YKR_grid_FinlandZone2.shp"
-itis_fp = r"C:\HY-Data\HENTENKA\PKS_saavutettavuusVertailut\Kauppakeskukset\NopeimmatAjatKauppakeskuksiin\Itakeskus_travelTimes_2009.shp"
+pointfolder = r"C:\HY-Data\HENTENKA\PKS_saavutettavuusVertailut\Kauppakeskukset\NopeimmatAjatKauppakeskuksiin"
+shapefiles = parseShapefilePaths(pointfolder)
 
+# Read Ykr-grid
 ykr = gpd.read_file(YKR_grid)
-itis = gpd.read_file(itis_fp)
 
-result = pointInPolygon(point_df=itis, poly_df=ykr, sourceColumn_in_poly='YKR_ID', targetColumn_in_point='YKR', fast_search=True)
+# Build R-tree spatial index for polygons
+rtree = buildRtree(ykr)
 
-#for row in ykr.iterrows():
+# Iterate over point Shapefiles and associate YKR-ID for each point
+for pointfile in shapefiles:
+    data = gpd.read_file(pointfile)
 
-#    if row[1]['geometry'].contains(r1['geometry'].values[0]):
-#        print "Found!"
-#        print row[1]['YKR_ID']
-#        break
+    # Make spatial join --> find YKR-ID for each point
+    joinWithYkr = pointInPolygon(point_df=data, poly_df=ykr, poly_rtree=rtree, sourceColumn_in_poly='YKR_ID', targetColumn_in_point='YKR')
+
+    # Generate outputname
+    output = os.path.join(os.path.dirname(pointfile), os.path.basename(pointfile)[:-4] + "_YKR_join.shp")
+
+    # Write outputfile
+    joinWithYkr.to_file(output, driver="ESRI Shapefile")
+
 
