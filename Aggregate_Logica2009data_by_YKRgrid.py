@@ -20,7 +20,7 @@ def filterFilesByName(file_path_list, filter_text):
 
 # File paths
 dataFolder = r"C:\HY-Data\HENTENKA\PKS_saavutettavuusVertailut\Kauppakeskukset\NopeimmatAjatKauppakeskuksiin"
-ykr_grid = r"C:\HY-Data\HENTENKA\Python\MassaAjoNiputus\ShapeFileet\MetropAccess_YKR_grid\MetropAccess_YKR_grid_FinlandZone2.shp"
+ykr_grid = r"C:\HY-Data\HENTENKA\PKS_saavutettavuusVertailut\YKR_asukkaat2009.shp"
 
 # List shapefiles
 all_shapes = parseShapefilePaths(dataFolder)
@@ -35,8 +35,8 @@ for shape in shapes:
     #Group by YKR_id
     grouped = data.groupby('YKR')
 
-    #Empty GeoDataFrame for results
-    results = gpd.GeoDataFrame(crs=data.crs)
+    # Create empty DataFrame for results
+    results = pd.DataFrame()
 
     i = 0
     for group in grouped:
@@ -61,13 +61,23 @@ for shape in shapes:
 
     # Join with YKR-Grid
     ykr = gpd.read_file(ykr_grid)
-    join = results.merge(results, how='outer', left_on='YKR', right_on='YKR_ID')
+    join = results.merge(ykr, how='inner', left_on='YKR', right_on='YKR_ID')
 
     # Generate outputName
     shoppingCenter = os.path.basename(shape).replace("_YKR_join.shp", "_Aggregated_By_YKR_grid.shp")
     outputShape = os.path.join(dataFolder, shoppingCenter)
 
-    join.to_file(outputShape, driver="ESRI Shapefile")
+    # Make GeoDataFrame from results
+    geo = gpd.GeoDataFrame(join, geometry='geometry', crs=ykr.crs)
+
+    # Drop duplicate 'YKR' column
+    geo = geo.drop(labels='YKR', axis=1)
+
+    # Write to Shapefile
+    geo.to_file(outputShape, driver="ESRI Shapefile")
+    print outputShape, "\n---------\n"
+
+
 
 
 
