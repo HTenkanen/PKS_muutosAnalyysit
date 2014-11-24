@@ -17,7 +17,7 @@ Prosessointivaiheet saavutettavuuden muutosanalyyseihin.
 ###2017 analyysi:
 
 1. [GenerateODfilesForReititin.py] (GenerateODfilesForReititin.py) - Muodostaa MetropAccess-Reitittimelle lähtöpisteet (YKR-solujen keskipisteet) ja kohdepisteet (kauppakeskusten koordinaatit) WGS84 projektiossa.
-2. [run_Reititin_PKS_MuutosAnalyysi2017.bat] (run_Reititin_PKS_MuutosAnalyysi2017.bat) - Ajokomentotiedosto Reitittimeen käyttäen: lähtöpisteinä [PKS_MuutosAnalyysit_OriginPoints_WGS84.txt] (ReititinFiles/PKS_MuutosAnalyysit_OriginPoints_WGS84.txt),
+2. [run_Reititin_PKS_MuutosAnalyysi2017.bat] (run_Reititin_PKS_MuutosAnalyysi2017.bat) - Ajokomentotiedosto [Reitittimeen] (http://blogs.helsinki.fi/saavutettavuus/tyokaluja/metropaccess-reititin/) käyttäen: lähtöpisteinä [PKS_MuutosAnalyysit_OriginPoints_WGS84.txt] (ReititinFiles/PKS_MuutosAnalyysit_OriginPoints_WGS84.txt),
 kohdepisteinä [PKS_MuutosAnalyysit_DestinationPoints_WGS84.txt] (ReititinFiles/PKS_MuutosAnalyysit_DestinationPoints_WGS84.txt), länsimetro+liityntälinjoina [newMetroWithFeederLines.shp] (ReititinFiles/newMetroWithFeederLines.shp),
 ja parametreina [confMassaAjo.json] (ReititinFiles/confMassaAjo.json)
 3. [ParseReititinResults.py] (ParseReititinResults.py) - Parsii matka-ajat Reitittimen tulostiedostosta ja luo näistä YKR-gridin.
