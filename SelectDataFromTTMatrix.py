@@ -1,6 +1,5 @@
 # coding=utf-8
 __author__ = 'hentenka'
-import pandas as pd
 import geopandas as gpd
 import SelectFiles_tools as sf
 import os, sys

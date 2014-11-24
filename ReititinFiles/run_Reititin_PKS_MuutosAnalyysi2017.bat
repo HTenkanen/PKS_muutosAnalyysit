@@ -1,0 +1,1 @@
+route.bat PKS_MuutosAnalyysit_OriginPoints_WGS84.txt PKS_MuutosAnalyysit_DestinationPoints_WGS84.txt --out-avg=PKS_muutosAnalyysit2017_results.txt --out-kml=PKS_muutosAnalyysit2017_results.kml --conf=confMassaAjo.json --extra=newMetroWithFeederLines.shp --base-path=C:\HY-Data\HENTENKA\MetropAccess-Reititin_1.2\20141114_data
