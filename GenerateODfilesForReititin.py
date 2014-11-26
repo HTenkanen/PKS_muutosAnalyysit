@@ -1,5 +1,5 @@
 __author__ = 'hentenka'
-import geopandas as gpd
+#import geopandas as gpd
 import pandas as pd
 import numpy as np
 import sys, os
@@ -75,26 +75,26 @@ for block in xrange(iterations):
 
 
 # Create Reititin commands
-
+outFolder = "C:\HY-Data\HENTENKA\KOODIT\PKS_muutosAnalyysit\ReititinFiles\OriginBlocks"
 file_paths = []
 cmd_file = "run_batch_Reititin_PKS_muutosAnalyysit.txt"
 batch_folder = r"C:\HY-Data\HENTENKA\KOODIT\PKS_muutosAnalyysit\ReititinFiles"
 f = open(os.path.join(batch_folder, cmd_file), 'w')
 i = 0
 command1 = "route.bat"
-command3 = "PKS_MuutosAnalyysit_DestinationPoints_WGS84.txt --conf=confMassaAjo.json --extra=newMetroWithFeederLines.shp --base-path=C:\HY-Data\HENTENKA\MetropAccess_Reititin_KalkatiJemma\data_20141114"
-
+command2 = "PKS_MuutosAnalyysit_DestinationPoints_WGS84.txt --conf=confMassaAjo.json --extra=newMetroWithFeederLines.shp --base-path=C:\HY-Data\HENTENKA\MetropAccess_Reititin_KalkatiJemma\data_20141114"
+out_command = ""
 
 for root, dirs, files in os.walk(outFolder):
     for filename in files:
-        command2 = "--out-avg=%s_PKS_muutosAnalyysit2017_results.txt --out-kml=%s_PKS_muutosAnalyysit2017_results.kml" % (i, i)
+        command3 = "--out-avg=Results/%s_PKS_muutosAnalyysit2017_results.txt --out-kml=Results/%s_PKS_muutosAnalyysit2017_results.kml" % (i, i)
 
-        out_command = "%s %s %s %s\n" % (command1, filename, command2, command3)
+        out_command += "%s %s %s %s&&" % (command1, filename, command2, command3)
 
         i+=1
-        print out_command
-        f.write(out_command)
 
+
+f.write(out_command[:-2])
 f.close()
 
 
