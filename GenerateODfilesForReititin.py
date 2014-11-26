@@ -1,5 +1,8 @@
 __author__ = 'hentenka'
 import geopandas as gpd
+import pandas as pd
+import numpy as np
+import sys, os
 
 def pointToCoords(row, pointCol, xCol, yCol):
     row[xCol] = row[pointCol].x
@@ -16,6 +19,7 @@ origPath = r"C:\HY-Data\HENTENKA\PKS_saavutettavuusVertailut\Kauppakeskukset\Nop
 destPath = r"C:\HY-Data\HENTENKA\PKS_saavutettavuusVertailut\Kauppakeskukset\NopeimmatAjatKauppakeskuksiin\Shopping_Centers_EurefFin.shp"
 origOut = r"C:\HY-Data\HENTENKA\PKS_saavutettavuusVertailut\Kauppakeskukset\NopeimmatAjatKauppakeskuksiin\PKS_MuutosAnalyysit_OriginPoints_WGS84.txt"
 destOut = r"C:\HY-Data\HENTENKA\PKS_saavutettavuusVertailut\Kauppakeskukset\NopeimmatAjatKauppakeskuksiin\PKS_MuutosAnalyysit_DestinationPoints_WGS84.txt"
+
 
 # Read files
 origins = gpd.read_file(origPath)
@@ -46,5 +50,52 @@ dest84.columns = ['id', 'x_wgs', 'y_wgs']
 orig84.to_csv(origOut, sep=';', index=False)
 dest84.to_csv(destOut, sep=';', index=False)
 
-print orig84[0:5]
-print dest84[0:5]
+
+data = pd.read_csv(origOut, sep=';')
+outFolder = "C:\HY-Data\HENTENKA\KOODIT\PKS_muutosAnalyysit\ReititinFiles\OriginBlocks"
+filename = "_PKS_MuutosAnalyysit_OriginPoints_WGS84.txt"
+
+
+block_size = 250
+row_count = float(len(data))
+iterations = int(row_count / block_size + 1)
+
+i = 0
+name_idx = 0
+for block in xrange(iterations):
+    try:
+        block_data = data[i:i+block_size]
+    except:
+        block_data = data[i:]
+
+    outName = os.path.join(outFolder, "%s%s" % (name_idx, filename))
+    block_data.to_csv(outName, sep=';', index=False)
+    i+=block_size
+    name_idx+=1
+
+
+# Create Reititin commands
+
+file_paths = []
+cmd_file = "run_batch_Reititin_PKS_muutosAnalyysit.txt"
+batch_folder = r"C:\HY-Data\HENTENKA\KOODIT\PKS_muutosAnalyysit\ReititinFiles"
+f = open(os.path.join(batch_folder, cmd_file), 'w')
+i = 0
+command1 = "route.bat"
+command3 = "PKS_MuutosAnalyysit_DestinationPoints_WGS84.txt --conf=confMassaAjo.json --extra=newMetroWithFeederLines.shp --base-path=C:\HY-Data\HENTENKA\MetropAccess_Reititin_KalkatiJemma\data_20141114"
+
+
+for root, dirs, files in os.walk(outFolder):
+    for filename in files:
+        command2 = "--out-avg=%s_PKS_muutosAnalyysit2017_results.txt --out-kml=%s_PKS_muutosAnalyysit2017_results.kml" % (i, i)
+
+        out_command = "%s %s %s %s\n" % (command1, filename, command2, command3)
+
+        i+=1
+        print out_command
+        f.write(out_command)
+
+f.close()
+
+
+
