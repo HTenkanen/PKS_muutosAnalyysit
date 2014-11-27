@@ -1,5 +1,5 @@
 __author__ = 'hentenka'
-#import geopandas as gpd
+import geopandas as gpd
 import pandas as pd
 import numpy as np
 import sys, os
