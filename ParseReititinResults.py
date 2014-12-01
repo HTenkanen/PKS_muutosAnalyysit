@@ -7,7 +7,8 @@ import geopandas as gpd
 # Paths
 #dataFolder = r"C:\HY-Data\HENTENKA\MetropAccess-Reititin_1.2\MetropAccess-Reititin\bin\Results"
 dataFolder = r"C:\HY-Data\HENTENKA\PKS_saavutettavuusVertailut\Kauppakeskukset\Results2017"
-population = r"C:\HY-Data\HENTENKA\PKS_saavutettavuusVertailut\YKR_asukkaat2013.shp"
+#population = r"C:\HY-Data\HENTENKA\PKS_saavutettavuusVertailut\YKR_asukkaat2013.shp"
+population = r"C:\HY-Data\HENTENKA\PKS_saavutettavuusVertailut\VaestoEnnusteet\PKS_VaestoEnnusteet_2017.shp"
 outputF = r"C:\HY-Data\HENTENKA\PKS_saavutettavuusVertailut\Kauppakeskukset\NopeimmatAjatKauppakeskuksiin"
 
 paths = []
@@ -54,13 +55,11 @@ for id, group in grouped:
     join = pop.merge(group, how='inner', left_on='YKR_ID', right_on='from_id')
 
     # Choose columns
-    join = join[['from_id', 'to_id', 'PT_total_t','PT_dist', 'Sum_ASYHT', 'geometry']]
-    join.columns = ['from_id', 'to_id', 'PTtotT_17','PT_dist17', 'Asuk13', 'geometry']
+    join = join[['from_id', 'to_id', 'PT_total_t','PT_dist', 'pop_esti17', 'geometry']]
+    join.columns = ['from_id', 'to_id', 'PTtotT_17','PT_dist17', 'pop_esti17', 'geometry']
 
     outPath = os.path.join(outputF, outputNames[id])
     join.to_file(outPath, driver="ESRI Shapefile")
-
-    break
 
 
 

@@ -20,7 +20,8 @@ Prosessointivaiheet saavutettavuuden muutosanalyyseihin.
 2. [run_Reititin_PKS_MuutosAnalyysi2017.bat] (run_Reititin_PKS_MuutosAnalyysi2017.bat) - Ajokomentotiedosto [Reitittimeen] (http://blogs.helsinki.fi/saavutettavuus/tyokaluja/metropaccess-reititin/) käyttäen: lähtöpisteinä [PKS_MuutosAnalyysit_OriginPoints_WGS84.txt] (ReititinFiles/PKS_MuutosAnalyysit_OriginPoints_WGS84.txt),
 kohdepisteinä [PKS_MuutosAnalyysit_DestinationPoints_WGS84.txt] (ReititinFiles/PKS_MuutosAnalyysit_DestinationPoints_WGS84.txt), länsimetro+liityntälinjoina [newMetroWithFeederLines.shp] (ReititinFiles/newMetroWithFeederLines.shp),
 ja parametreina [confMassaAjo.json] (ReititinFiles/confMassaAjo.json)
-3. [ParseReititinResults.py] (ParseReititinResults.py) - Parsii matka-ajat Reitittimen tulostiedostosta ja luo näistä YKR-gridin.
+3. [Determine_population_projections.py] (Determine_population_projections.py) - Parsii YKR-ruutukohtaisen väestöennusteen vuodelle 2017 perustuen [Pääkaupunkiseudun väestöennusteeseen] (http://www.hri.fi/fi/dataset/paakaupunkiseudun-vaestoennuste-2012-2021)
+4. [ParseReititinResults.py] (ParseReititinResults.py) - Parsii matka-ajat Reitittimen tulostiedostosta ja luo näistä YKR-gridin.
 
 ###Muutosanalyysit:
 
