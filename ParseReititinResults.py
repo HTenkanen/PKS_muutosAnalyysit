@@ -9,7 +9,7 @@ import geopandas as gpd
 dataFolder = r"C:\HY-Data\HENTENKA\PKS_saavutettavuusVertailut\Kauppakeskukset\Results2017"
 #population = r"C:\HY-Data\HENTENKA\PKS_saavutettavuusVertailut\YKR_asukkaat2013.shp"
 population = r"C:\HY-Data\HENTENKA\PKS_saavutettavuusVertailut\VaestoEnnusteet\PKS_VaestoEnnusteet_2017.shp"
-outputF = r"C:\HY-Data\HENTENKA\PKS_saavutettavuusVertailut\Kauppakeskukset\NopeimmatAjatKauppakeskuksiin"
+outputF = r"C:\HY-Data\HENTENKA\PKS_saavutettavuusVertailut\Kauppakeskukset\NopeimmatAjatKauppakeskuksiin\RECALCULATES"
 
 paths = []
 
@@ -26,19 +26,19 @@ for result in paths:
     data = pd.read_csv(result, sep=';')
 
     # Select columns
-    data = data[['from_id', 'to_id', 'total_route_time', 'route_distance']]
+    data = data[['from_id', 'to_id', 'route_time', 'total_route_time', 'route_distance']]
     full_data = full_data.append(data)
 
 # Change -99999.99 to NaN
-full_data = full_data.replace(to_replace={'total_route_time': {-99999.99: np.nan}})
+full_data = full_data.replace(to_replace={'total_route_time': {-99999.99: np.nan}, 'route_time': {-99999.99: np.nan}})
 
 # Round distance values to full meters
 full_data['PT_dist'] = full_data.apply(lambda x: np.round(x['route_distance']), axis=1)
-full_data = full_data[['from_id', 'to_id', 'total_route_time','PT_dist']]
-full_data.columns = ['from_id', 'to_id', 'PT_total_t','PT_dist']
+full_data = full_data[['from_id', 'to_id', 'route_time', 'total_route_time','PT_dist']]
+full_data.columns = ['from_id', 'to_id', 'PT_T17', 'PT_ToT17','PT_D17']
 
 # Drop NaNs
-full_data = full_data.dropna(axis=0, subset=['PT_total_t'])
+full_data = full_data.dropna(axis=0, subset=['PT_T17', 'PT_ToT17'])
 
 # Group by destination
 grouped = full_data.groupby('to_id')
@@ -55,8 +55,7 @@ for id, group in grouped:
     join = pop.merge(group, how='inner', left_on='YKR_ID', right_on='from_id')
 
     # Choose columns
-    join = join[['from_id', 'to_id', 'PT_total_t','PT_dist', 'pop_esti17', 'geometry']]
-    join.columns = ['from_id', 'to_id', 'PTtotT_17','PT_dist17', 'pop_esti17', 'geometry']
+    join = join[['from_id', 'to_id', 'PT_T17', 'PT_ToT17','PT_D17', 'pop_esti17', 'geometry']]
 
     outPath = os.path.join(outputF, outputNames[id])
     join.to_file(outPath, driver="ESRI Shapefile")

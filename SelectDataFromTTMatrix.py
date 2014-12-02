@@ -8,8 +8,8 @@ from shapely.geometry import Point
 import spatial_tools as st
 
 # File paths
-data_folder = r"C:\HY-Data\HENTENKA\PKS_saavutettavuusVertailut\Kauppakeskukset\NopeimmatAjatKauppakeskuksiin"
-data_path = r"C:\HY-Data\HENTENKA\PKS_saavutettavuusVertailut\Kauppakeskukset\NopeimmatAjatKauppakeskuksiin\Kampin_keskus_travelTimes_2009_Aggregated_By_YKR_grid.shp"
+data_folder = r"C:\HY-Data\HENTENKA\PKS_saavutettavuusVertailut\Kauppakeskukset\NopeimmatAjatKauppakeskuksiin\RECALCULATES"
+data_path = r"C:\HY-Data\HENTENKA\PKS_saavutettavuusVertailut\Kauppakeskukset\NopeimmatAjatKauppakeskuksiin\FINALS\Kamppi\Kampin_keskus_travelTimes_2009_Aggregated_By_YKR_grid.shp"
 population = r"C:\HY-Data\HENTENKA\PKS_saavutettavuusVertailut\YKR_asukkaat2013.shp"
 
 # Make a list of origin YKR IDs that will be included in the analyses
@@ -21,7 +21,7 @@ orig_ykr_ids = list(data['YKR_ID'].values)
 # ------------------------------------------------------------------------
 
 # Geocode locations of Shopping centers using Google Places (Note! Using googleplaces.text_search uses 10 times more quota!)
-
+"""
 shopping_centers = {'Itis, Helsinki':None, 'Kauppakeskus Jumbo, Vantaa':None, 'Iso Omena, Espoo':None, 'Kauppakeskus Kamppi, Helsinki':None,
                     'Kauppakeskus Ruoholahti, Helsinki':None, 'Kauppakeskus Myyrmanni, Vantaa':None, 'Sello, Espoo':None}
 
@@ -53,11 +53,11 @@ spatial_join['name'] = spatial_join['Center'].str.split(',').str.get(0).str.repl
 # Export centers to Shapefile
 centers_shape = r"C:\HY-Data\HENTENKA\PKS_saavutettavuusVertailut\Kauppakeskukset\NopeimmatAjatKauppakeskuksiin\Shopping_Centers_EurefFin.shp"
 spatial_join.to_file(centers_shape, driver="ESRI Shapefile")
-
+"""
 spatial_join = gpd.read_file("C:\HY-Data\HENTENKA\PKS_saavutettavuusVertailut\Kauppakeskukset\NopeimmatAjatKauppakeskuksiin\Shopping_Centers_EurefFin.shp")
 
 # List all travel time matrix files
-ttm_folder = r"C:\HY-Data\HENTENKA\Python\MassaAjoNiputus\MetropAccess-matka-aikamatriisi_Ajot_2014_04\MetropAccess-matka-aikamatriisi_TOTAL_FixedInternalCells"
+ttm_folder = r"C:\HY-Data\HENTENKA\Matka_aika_matriisi\MetropAccess-matka-aikamatriisi_TOTAL_FixedInternalCells"
 ttm_files = sf.listFiles(ttm_folder)
 
 # Create Travel Time YKR-grid Shapefiles to shopping centers
@@ -71,16 +71,16 @@ for destination in spatial_join.iterrows():
     join = data.merge(selection, how='inner', left_on='YKR_ID', right_on='from_id')
 
     # Choose columns
-    join = join[['from_id', 'to_id', 'PT_total_time', 'Car_time']]
+    join = join[['from_id', 'to_id', 'PT_time', 'PT_total_time', 'PT_dist', 'Car_time', 'Car_dist']]
 
     # Join with population dataset
     pop_join = join.merge(pop, how='inner', left_on='from_id', right_on='YKR_ID')
 
     # Choose columns
-    pop_join = pop_join[['from_id', 'to_id', 'PT_total_time', 'Car_time', 'Sum_ASYHT', 'geometry']]
+    pop_join = pop_join[['from_id', 'to_id', 'PT_time', 'PT_total_time', 'PT_dist', 'Car_time', 'Car_dist', 'Sum_ASYHT', 'geometry']]
 
     # Rename columns
-    pop_join.columns = ['from_id', 'to_id', 'PT_tot_t', 'Car_time', 'Asuk13', 'geometry']
+    pop_join.columns = ['from_id', 'to_id', 'PT_T13', 'PT_ToT13', 'PT_D13', 'Car_T13', 'Car_D13', 'Asuk13', 'geometry']
 
     # Create GeoDataFrame
     geo = gpd.GeoDataFrame(pop_join, geometry='geometry', crs=data.crs)
