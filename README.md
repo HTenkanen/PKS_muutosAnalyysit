@@ -28,6 +28,10 @@ ja parametreina [confMassaAjo.json] (ReititinFiles/confMassaAjo.json)
 1. [Accessibility_ChangeAnalysis_years2009to2017.py] (Accessibility_ChangeAnalysis_years2009to2017.py) - Yhdistää eri vuosien datat samaan tiedostoon ja laskee ostoskeskusten saavutettavuuden ja näiden muutokset eri vuosien välillä huomioiden väestön: 2009 vs. 2013, 2009 vs. 2017, 2013 vs. 2017.
 2. [Visualize_Accessibility_curves.py] (Visualize_Accessibility_curves.py) - Visualisoi ostoskeskusten saavuttamat asukkaat kumulatiivisina käyrinä vuosina 2009, 2013, 2017 sekä vuoden 2017 saavuttamat asukkaat ilman väestöennustetta.
 
+###Apuvälineitä
+1. [spatial_tools.py] (spatial_tools.py) - Kokoelma paikkatietofunktioita.
+2. [SelectFiles_tools.py] (SelectFiles_tools.py) - Kokoelma työkaluja MetropAccess-Matka-aikamatriisin käsittelyyn.
+
 
 
 
